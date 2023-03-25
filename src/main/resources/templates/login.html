@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>图书共享系统</title>
+  <meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta name="keywords" content="小说" />
+   <link rel="stylesheet" type="text/css" th:href="@{/css/passport.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+  <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+  <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+
+</head>
+
+<body data-cpt3="1" data-cpt3app="FFFF0N00000000006BA5" data-cpt3scene="ic_login">
+
+  <div class="wrap pass_header">
+    <div class="pass_logo">
+<!--      <a th:href="@{/index}" ><img th:src="@{/picture/logo.png}"  alt="" src=""/></a> 必须登录 -->
+<!--      <img th:src="@{/picture/logo2.jpg}"  alt="" src=""/>-->
+    </div>
+    <div class="pass_link">
+      没有账号 <a th:href="@{/signin}">注册</a>
+    </div>
+  </div>
+  <div class="passbg">
+    <div class="wrap">
+      <div class="pass_ad">
+<!-- 必须登录       <a th:href="@{/index}" title="" target="_blank"><img th:src="@{/picture/enterzh.jpg}" width="560" height="410" alt="" src=""></a>-->
+        <img th:src="@{/picture/780.jfif}" width="560" height="410" alt="" src="">
+      </div>
+      <div class="login box">
+        <div class="comlogin" id="nloginType_comm">
+          <div class="login-style">
+
+            <a  href="javascript:void(0)"  class="user-btn active" onclick="showUserForm()">用户登录</a>
+            <span class="login-s-line"></span><span class="login-s-user fr data-feeler wait" clkseed="ACCOUNT-TAB">
+          </span>
+          <a  href="javascript:void(0)"   class="admin-btn" onclick="showAdminForm()">管理员登录</a>
+          </div>
+          <div class="cl0"></div>
+          <label style="color: red;position:relative; bottom:-30px;" th:text="${msg}"></label>
+
+          <div id="user-form" class="login-box" style="display: block;">
+            <form class="layui-form" th:action="@{/login}" method="post" >
+            <p class="layui-form-item">
+              <label>
+              <input type="text" name="username" lay-verify="required" lay-reqtext="账号是必填项，岂能为空？" placeholder="&#xe66f; 输入账号" autocomplete="off" class="layui-input layui-icon"/>
+              </label>
+            </p>
+            <p class="layui-form-item">
+              <label>
+                <input type="password" name="password" lay-verify="required" lay-reqtext="密码是必填项，岂能为空？" placeholder="&#xe673; 输入密码" autocomplete="off" class="layui-input layui-icon">
+              </label>
+            </p>
+            <p class="checkbox" style="text-align: right;"><a href="#" class="wait">
+<!--              忘记密码-->
+            </a></a></p>
+            <input type="submit" class="btn-submit btn-red submit-user" lay-submit lay-filter="form" value="登录" />
+            </form>
+          </div>
+<!--管理员 form表单-->
+
+          <div id="admin-form" class="login-box" style="display: none;">
+            <form class="layui-form" th:action="@{/admin/loginCheck}" method="post" >
+              <p class="layui-form-item">
+                <label>
+                  <input type="text" name="username" lay-verify="required" lay-reqtext="账号是必填项，岂能为空？" placeholder="&#xe66f; 输入管理员账号" autocomplete="off" class="layui-input layui-icon"/>
+                </label>
+              </p>
+              <p class="layui-form-item">
+                <label>
+                  <input type="password" name="password" lay-verify="required" lay-reqtext="密码是必填项，岂能为空？" placeholder="&#xe673; 输入密码" autocomplete="off" class="layui-input layui-icon">
+                </label>
+              </p>
+              <input type="submit" class="btn-submit btn-red submit-user" lay-submit lay-filter="form" value="登录" />
+            </form>
+          </div>
+        </div>
+        <div class="cl0"></div>
+      </div>
+    </div>
+    <div class="cl0"></div>
+    <div class="cl15"></div>
+  </div>
+  <script type="text/javascript" th:src="@{/js/prompt.js}"></script>
+  <script>
+    function showUserForm() {
+      var userForm = document.getElementById("user-form");
+      var adminForm = document.getElementById("admin-form");
+      var userBtn = document.querySelector(".user-btn");
+      var adminBtn = document.querySelector(".admin-btn");
+
+      userForm.style.display = "block";
+      adminForm.style.display = "none";
+      userBtn.classList.add("active");
+      adminBtn.classList.remove("active");
+    }
+
+    function showAdminForm() {
+      var userForm = document.getElementById("user-form");
+      var adminForm = document.getElementById("admin-form");
+      var userBtn = document.querySelector(".user-btn");
+      var adminBtn = document.querySelector(".admin-btn");
+
+      userForm.style.display = "none";
+      adminForm.style.display = "block";
+      userBtn.classList.remove("active");
+      adminBtn.classList.add("active");
+    }
+  </script>
+</body>
+</html>

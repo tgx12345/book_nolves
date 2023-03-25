@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="" />
+    <title>书架</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/basic.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/store.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+    <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+
+
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="head-top clearfix">
+            <div class="logo imgbox fl">
+                <a th:href="@{/fiction/index}">
+                    <img th:src="@{/picture/logo2.jpg}" alt="logo"  src="">
+                </a>
+            </div>
+            <form id="commSearch" name="searchForm" method="get" th:action="@{/fiction/search}" target="_blank">
+                <div class="search-box fl" data-hook="searchSuggest">
+                    <label>
+                        <input class="search-text fl" name="fictionName" type="text"
+                               placeholder="请输入书名"/>
+                    </label>
+                    <input type="submit" class="search-btn fr"/>
+                </div>
+            </form>
+            <div class="right-wrap-login ud_userTox" style="right: 0">
+                <div class="unlogin ud_unlogin clearfix">
+                    <div th:if="${session.user.username==null}" class="login fl"><a class="user_login layui-icon" th:href="@{/login}">&#xe66f;登录</a></div>
+                    <div th:if="${session.user.username==null}" class="regist fl"><a class="user_register layui-icon" th:href="@{/signin}">&#xe672;注册</a></div>
+                    <div th:if="${session.user.username!=null}" class="shelf">
+                        <a th:href="@{/shelf/shelf}" class="layui-icon" target="_blank">&#xe705;书架</a>
+                        <a style="padding-left: 18px;" class="layui-icon" th:href="@{/logout}">&#x1006;注销</a></div>
+                </div>
+            </div>
+        </div>
+        <div style="display: none" class="nav clearfix">
+            <a class="active" th:href="@{/fiction/index}">书库<em></em></a>
+        </div>
+    </div>
+    <div class="h10-blank"></div>
+    <!-- 1.	书库头部广告位 -->
+    <div class="h20-blank"></div>
+    <!-- 下拉复选区 -->
+    <div class="bookstore_sort sort">
+        <div class="kind">
+            <div style="font-size: 18px">我的书架</div>
+            <div class="cl0"></div>
+        </div>
+    </div>
+    <!--图文区-->
+    <div class="store_list_wrap">
+    <div class="store_collist">
+        <p th:if="${list.size()==0}" style="text-align: center">暂无书籍</p>
+        <div th:each="item,status : ${list}">
+            <div  th:class="${status.count%2==0}?'bookbox fr':'bookbox fl'" class="bookbox fl">
+                <div class="bookimg">
+                    <a th:href="'/chapter/info/'+${item.fictionId}" target="_blank">
+                        <img th:src="${item.fiction.imgUrl}"
+                             src="http://www.shuquge.com/files/article/image/86/86786/86786s.jpg"
+                             th:alt="${item.fiction.fictionName}" alt="暗影统领的公主妻">
+                    </a>
+                </div>
+                <div class="bookinfo">
+                    <div class="bookname">
+                        <a th:text="${item.fiction.fictionName}" th:href="'/chapter/info/'+${item.fictionId}"
+                           target="_blank">暗影统领的公主妻</a>
+                    </div>
+                    <div class="bookilnk">
+                        <a th:text="${item.fiction.author}" href="" target="_blank">白白颜卿</a>|
+                        <a th:text="${item.fiction.type}" href="" target="_blank">历史军事}</a>|
+                        <span th:text="${item.fiction.state}">
+                                连载中
+                        	</span>|
+                        <span th:text="${item.fiction.createDate}">
+                            更新时间&nbsp;&nbsp;2019-12-14T08:08:27.000+0000
+                            </span>
+                    </div>
+                    <div th:text="${item.fiction.brief}" class="bookintro">
+                        　　颜乐蓄谋已久的逃离控制着她生活的杀手组织，孤注一掷的想摆脱成为傀儡的命运，却未曾想到那夜的转机，改变了她早已被人安排的命盘，但她又好似陷入另一个旋涡......　　云衡王朝，皇帝亲立抗暝司，寓意破除灰暗，执掌光明，凌驾于一切官府。
+                        穆凌绎身为抗暝司统领最大职责是找回王朝唯一的异姓公主，这断了十几年的线索突然再一名女刺客身上明朗了......　　爱而不得的苏祁琰，此后一生有谁能陪伴在不老的他心里呢.......　　皇宫深院，有多少事都陷进了黑暗的阴谋之中......　　江湖传说暗影却是心上之人......　　并肩疆场杀敌之后......……
+                    </div>
+                    <div class="bookupdate">
+                        <a th:text="${item.fiction.newest}" href="" class="fl">第八百二十二章 她不是你娘亲！</a>
+                        <span class="rank_d_b_time"></span>
+                        <a th:href="'/chapter/read/'+${item.fictionId}+'/'+${item.lastReadSort}" target="_blank"><button type="button" class="layui-btn layui-btn-xs" >继续阅读</button></a>
+                        <button th:onclick="'javascript:deleteShelf(\''+${item.fictionId}+'\')'"  type="button" class="layui-btn layui-btn-xs layui-btn-danger">移出书架</button>
+                    </div>
+                </div>
+            </div>
+            <div  th:if="${status.count%2==0}" class="dotline"></div>
+        </div>
+    </div>
+    </div>
+    <!--图文区-->
+</div>
+<div class="footer" style="margin-top: 100px;">
+    <div class="copyright">
+        <div class="links">
+            <a href="" target="_blank">诚聘英才</a>|
+            <a href="" target="_blank">商务合作</a>|
+            <a href="" target="_blank">法律声明</a>|
+            <a href="" target="_blank">帮助中心</a>|
+            <a href="" target="_blank">作者投稿</a>|
+            <a href="" target="_blank">联系我们</a>|
+            <a href="" target="_blank">友情链接</a>|
+            <a href="" target="_blank">谨防诈骗</a>|
+            <a href="" target="_blank">网站地图</a></div>
+
+    </div>
+</div>
+<script>
+    layui.use(['layer'], function(){
+    });
+    function deleteShelf(id){
+        $.ajax({
+            url: "/shelf/deleteShelf",
+            type: "POST",
+            data: {"id": id},
+            dataType: 'json',
+            success: function (res) {
+                if (res.status===200){
+                    layer.msg(res.msg, {icon: 6});
+                    window.location.href = "/shelf/shelf";
+                }else {
+                    layer.msg(res.msg, {icon: 5,anim: 6});
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

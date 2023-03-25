@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cduestc.book_novels.mapper.ChapterMapper">
+    <select id="queryChapterByficiton_id" resultType="com.cduestc.book_novels.bean.Chapter">
+        select * from chapter  where `fiction_id`=#{fiction_id}
+    </select>
+    <select id="queryChapter" resultType="com.cduestc.book_novels.bean.Chapter">
+        select * from chapter where `fiction_id`=#{fiction_id} and `sort`=#{sort}
+    </select>
+    <select id="queryMaxSort" resultType="Integer">
+        SELECT MAX(sort)  FROM chapter   WHERE `fiction_id`=#{fiction_id}
+    </select>
+    <insert id="insertChapter">
+        insert into chapter   (`fiction_id`,`chapter_name`,`create_date`,`sort`,`chapter_content`)
+                                values(#{fictionId},#{chapterName},#{createDate},#{sort},#{chapterContent})
+    </insert>
+</mapper>

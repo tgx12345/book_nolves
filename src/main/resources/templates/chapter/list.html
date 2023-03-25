@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>[[${title}]]小说_</title>
+    <meta name="keywords" content="章节列表"/>
+    <meta name="description" content="章节列表"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/basic.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/reader.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/chapterlist.min.css}"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+
+    <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/jquery-1.9.1.js}"></script>
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="head-top clearfix">
+            <div class="logo imgbox fl">
+                <a th:href="@{/fiction/index}"><img th:src="@{/picture/logo2.jpg}" alt="logo"  src=""></a>
+            </div>
+            <form id="commSearch" name="searchForm" method="get" th:action="@{/fiction/search}" target="_blank">
+                <div class="search-box fl" data-hook="searchSuggest">
+                    <label>
+                        <input class="search-text fl" name="fictionName" type="text"
+                               placeholder="请输入书名"/>
+                    </label>
+                    <input type="submit" class="search-btn fr"/>
+                </div>
+            </form>
+            <div class="right-wrap-login ud_userTox" style="right: 0">
+                <div class="unlogin ud_unlogin clearfix">
+                    <div th:if="${session.user.username==null}" class="login fl"><a class="user_login layui-icon" th:href="@{/login}">&#xe66f;登录</a></div>
+                    <div th:if="${session.user.username==null}" class="regist fl"><a class="user_register layui-icon" th:href="@{/signin}">&#xe672;注册</a></div>
+                    <div th:if="${session.user.username!=null}" class="shelf">
+                        <a th:href="@{/shelf/shelf}" class="layui-icon" target="_blank">&#xe705;书架</a>
+                        <a style="padding-left: 18px;" class="layui-icon" th:href="@{/logout}">&#x1006;注销</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="h10-blank"></div>
+    <!-- 1.	书库头部广告位 -->
+    <div class="h20-blank"></div>
+    <div class="h15-blank"></div>
+    <!-- 目录页开始 -->
+    <div class="container">
+        <div  class="book-meta">
+            <h1 th:text="${fiction.fictionName}"></h1>
+            <p>
+                <span><i>作者：</i><a href="" th:text="${fiction.author}" ></a></span>
+                <span><i th:text="${fiction.createDate}">更新时间：</i></span>
+                <span><i th:text="${fiction.newest}">最新章节：</i></span>
+            </p>
+        </div>
+        <div>
+            <div class="section_title clearfix">
+            </div>
+            <div class="volume ">
+                <em class="v-line"></em>小说章节<em class="count" th:text="'共'+${size}+'章'">共92章<i>·</i>共<cite th:text="${fiction.number}">185383</cite>字</em>
+            </div>
+            <div class="volume-list">
+                <div>
+                    <ul  class="chapter-list clearfix">
+
+                        <li th:each="item : ${chapters}" class=" col-4">
+                            <a  th:text="${item.chapterName}" th:href="'/chapter/read/'+${item.fictionId}+'/'+${item.sort}" target="_blank" th:alt-title="${fiction.fictionName}+'更新时间：'+${item.createDate}"></a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+</div>
+    <div class="footer">
+        <div class="copyright">
+            <div class="links">
+                <a href="" target="_blank">诚聘英才</a>|
+                <a href="" target="_blank">商务合作</a>|
+                <a href="" target="_blank">法律声明</a>|
+                <a href="" target="_blank">帮助中心</a>|
+                <a href="" target="_blank">作者投稿</a>|
+                <a href="" target="_blank">联系我们</a>|
+                <a href="" target="_blank">友情链接</a>|
+                <a href="" target="_blank">谨防诈骗</a>|
+                <a href="" target="_blank">网站地图</a></div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cduestc.book_novels.mapper.UserMapper">
+    <select id="selectOne" resultType="com.cduestc.book_novels.bean.User">
+        select * from user where `username`=#{username} and `password`=#{password}
+    </select>
+<!-- user  selectByName -->
+    <select id="selectByName" resultType="com.cduestc.book_novels.bean.User">
+        select * from user where `username`=#{username}
+    </select>
+    <select id="getAllUser" resultType="com.cduestc.book_novels.bean.User">
+        select * from user
+    </select>
+
+<!--int insertOne-->
+    <insert id="insertOne"  >
+        insert into user values (null, #{username}, #{password}, #{shelf_id},#{username1})
+    </insert>
+    <update id="updateUser">
+        update user
+        set
+        `password`=#{password}
+        where `id`=#{id}
+    </update>
+    <delete id="deleteUser">
+        delete from user  where  `id`=#{userid}
+    </delete>
+</mapper>

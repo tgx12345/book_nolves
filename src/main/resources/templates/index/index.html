@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图书共享系统</title>
+    <meta name="keywords" content="图书共享系统"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/basic.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/store.min.css}"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.min.css}"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+
+    <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <style>
+        a {
+            cursor: pointer;
+        }
+
+        body {
+            background-color: #FCFCFC;
+        }
+
+        dl,
+        dd {
+            margin: 0;
+        }
+
+        #box {
+            width: 100%;
+            margin: 0px auto;
+        }
+
+        #box dl {
+            height: 50px;
+            line-height: 50px;
+            border-bottom: 1px dashed #dadada;
+            margin: 0 20px;
+        }
+
+        #box dt {
+            float: left;
+            color: #8a8a8a;
+        }
+
+        #box dd {
+            float: left;
+            color: #252525;
+            margin: 0 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #box dd.active {
+            color: #c4284d;
+            font-weight: bold;
+        }
+
+        #box dl.select {
+            background: #efefef;
+            margin: 0;
+            padding: 0 20px;
+        }
+
+        #box dl.select dd {
+            border: 1px solid #c4284d;
+            height: 25px;
+            line-height: 25px;
+            margin-top: 13px;
+            padding: 0 2px 0 10px;
+            border-radius: 3px;
+            background-color: #fff;
+        }
+
+        #box dl.select dd span {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            text-align: center;
+            line-height: 20px;
+            background: #c4284d;
+            color: #fff;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="head-top clearfix">
+            <div class="logo imgbox fl">
+                <a th:href="@{/fiction/index}">
+
+                    <img th:src="@{/picture/logo2.jpg}" alt="logo" src="">
+                </a>
+            </div>
+<!--            搜索-->
+            <form id="commSearch" name="searchForm" method="get" th:action="@{/fiction/search}" target="_blank">
+                <div class="search-box fl" data-hook="searchSuggest">
+                    <label>
+                        <input class="search-text fl" name="fictionName" type="text"
+                               placeholder="请输入书名"/>
+                    </label>
+                    <input type="submit" class="search-btn fr"/>
+                </div>
+            </form>
+            <div class="right-wrap-login ud_userTox" style="right: 0">
+                <div class="unlogin ud_unlogin clearfix">
+                    <div th:if="${session.user.username==null}" class="login fl"><a class="user_login layui-icon"
+                                                                               th:href="@{/login}">&#xe66f;登录</a></div>
+                    <div th:if="${session.user.username==null}" class="regist fl"><a class="user_register layui-icon"
+                                                                                th:href="@{/signin}">&#xe672;注册</a>
+                    </div>
+                    <div th:if="${session.user.username!=null}" class="shelf">
+                        <a th:href="@{/shelf/shelf}" class="layui-icon" target="_blank">&#xe705;书架</a>
+                        <a style="padding-left: 18px;" class="layui-icon" th:href="@{/logout}">&#x1006;注销</a></div>
+                </div>
+            </div>
+        </div>
+        <div style="display: none" class="nav clearfix">
+            <a class="active" th:href="@{/fiction/index}">书库<em></em></a>
+        </div>
+    </div>
+    <div class="h10-blank"></div>
+    <!-- 1.	书库头部广告位 -->
+    <div class="h20-blank"></div>
+    <!-- 书库主内容 -->
+    <!-- 顶部复选区 -->
+    <div class="bookstore_tbox">
+        <div class="bookstore_select">
+            <div class="select_con">
+                <!-- 作品分类 -->
+                <div class="kind">
+                    <div class="bz">作品分类：</div>
+                    <div class="nr br sub">
+                        <a class="store" onclick="queryBook('type:0')" id="type0">全部作品</a>
+                        <a class=" store" onclick="queryBook('type:1')" id="type1">玄幻魔法<em></em></a><a
+                            class="store" onclick="queryBook('type:2')" id="type2">武侠修真<em></em></a><a
+                            class="store" onclick="queryBook('type:3')" id="type3">都市言情<em></em></a><a
+                            class="store" onclick="queryBook('type:4')" id="type4">历史军事<em></em></a><a
+                            class="store" onclick="queryBook('type:4')" id="type5">侦探推理<em></em></a><a
+                            class="store" onclick="queryBook('type:5')" id="type6">网游动漫<em></em></a><a
+                            class="store" onclick="queryBook('type:5')" id="type7">科幻灵异<em></em></a><a
+                            class="store" onclick="queryBook('type:8')" id="type8">完本<em></em></a><a
+                            class="store" onclick="queryBook('type:9')" id="type9">文学典籍<em></em></a>
+
+                        <br>
+                    </div>
+
+                    <div class="spline"></div>
+                </div>
+                <!-- 写作进度 -->
+                <div class="kind">
+                    <div class="bz">写作进度：</div>
+                    <div class="nr br">
+                        <a class="store" onclick="queryBook('state:0')" id="state0">全部</a>
+                        <a class="store" onclick="queryBook('state:1')" id="state1">连载中</a>
+                        <a class="store" onclick="queryBook('state:2')" id="state2">已完结</a>
+                    </div>
+                    <div class="cl0"></div>
+                </div>
+                <!-- 作品字数 -->
+                <div class="kind">
+                    <div class="bz">作品字数：</div>
+                    <div class="nr br">
+                        <a class="store" onclick="queryBook('number:0')" id="number0">全部</a>
+                        <a class="store" onclick="queryBook('number:1')" id="number1">30万字以下</a>
+                        <a class="store" onclick="queryBook('number:2')" id="number2">30万-50万</a>
+                        <a class="store" onclick="queryBook('number:3')" id="number3">50万-100万</a>
+                        <a class="store" onclick="queryBook('number:4')" id="number4">100万-200万</a>
+                        <a class="store" onclick="queryBook('number:5')" id="number5">200万以上</a>
+                    </div>
+                    <div class="cl0"></div>
+                </div>
+                <!-- 更新时间 -->
+                <div class="kind">
+                    <div class="bz">更新时间：</div>
+                    <div class="nr br">
+                        <a  class="store" onclick="queryBook('time:0')" id="time0">全部</a>
+                        <a class="store" onclick="queryBook('time:1')" id="time1">三日内</a>
+                        <a class="store" onclick="queryBook('time:2')" id="time2">七日内</a>
+                        <a class="store" onclick="queryBook('time:3')" id="time3">半月内</a>
+                        <a class="store" onclick="queryBook('time:4')" id="time4">一月内</a>
+                    </div>
+                    <div class="cl0"></div>
+                </div>
+                <!-- 书名首字母 -->
+                <div class="kind">
+                    <div class="bz">书名首字母：</div>
+                    <div class="nr">
+<!--                        current-->
+                        <a class=" store" href="javascript:void(0)" firstchar="ALL">全部</a>
+                        <a class="store" href="javascript:void(0)" firstchar="A">A</a><a class="store"
+                                                                                         href="javascript:void(0)"
+                                                                                         firstchar="B">B</a><a
+                            class="store" href="javascript:void(0)" firstchar="C">C</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="D">D</a><a
+                            class="store" href="javascript:void(0)" firstchar="E">E</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="F">F</a><a
+                            class="store" href="javascript:void(0)" firstchar="G">G</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="H">H</a><a
+                            class="store" href="javascript:void(0)" firstchar="I">I</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="J">J</a><a
+                            class="store" href="javascript:void(0)" firstchar="K">K</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="L">L</a><a
+                            class="store" href="javascript:void(0)" firstchar="M">M</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="N">N</a><a
+                            class="store" href="javascript:void(0)" firstchar="O">O</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="P">P</a><a
+                            class="store" href="javascript:void(0)" firstchar="Q">Q</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="R">R</a><a
+                            class="store" href="javascript:void(0)" firstchar="S">S</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="T">T</a><a
+                            class="store" href="javascript:void(0)" firstchar="U">U</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="V">V</a><a
+                            class="store" href="javascript:void(0)" firstchar="W">W</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="X">X</a><a
+                            class="store" href="javascript:void(0)" firstchar="Y">Y</a><a class="store"
+                                                                                          href="javascript:void(0)"
+                                                                                          firstchar="Z">Z</a>
+                        <a class="store" href="javascript:void(0)" firstchar="OTHER">其他</a>
+                    </div>
+                    <div class="cl0"></div>
+                </div>
+                <!-- 其他 -->
+
+                <div class="storeline"></div>
+                <!--                <div class="kind">-->
+                <!--                    <div class="bz">已选条件：</div>-->
+                <!--                    <div class="nr" id="selectedParams">-->
+                <!--                        <span class="selected">奇幻玄幻<a href="javascript:void(0);" class="store" categoryid="0"></a></span>-->
+                <!--                        <span class="selected">30万-50万<a href="javascript:void(0);" class="store" totalword="0"></a></span>-->
+                <!--                    </div>-->
+                <!--                    <div class="cl0"></div>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </div>
+    <div class="h15-blank"></div>
+    <!-- 下拉复选区 -->
+    <div class="bookstore_sort sort">
+        <div class="kind">
+            <div style="font-size: 18px">本站最近更新</div>
+            <div class="cl0"></div>
+        </div>
+        <div class="sort_listtype">
+            阅读模式
+            <a id="c_digi" onclick="queryBook('viewType:2')" class="c_digi"></a>
+            <a id="l_list" onclick="queryBook('viewType:1')" class="l_list"></a>
+        </div>
+    </div>
+
+    <!-- 书籍列表区 图文模式 -->
+    <div class="store_list_wrap">
+        <div th:if="${data.viewType==1}" class="store_booklist">
+            <div class="con">
+                <div class="tab-head">
+                    <span class="kind">类别</span>
+                    <span class="bookname">书名</span>
+                    <span class="chap">章节</span>
+                    <span class="status">状态</span>
+                    <span class="count">总字数</span>
+                    <span class="author">作者</span>
+                    <span class="time">更新时间</span>
+                </div>
+                <ul class="main_con">
+                    <li th:each="item,status : ${data.data}">
+                        <span class="kind"><a href="" th:text="${item.type}" target="_blank">[奇幻玄幻]</a></span>
+                        <span class="bookname"><a th:text="${item.fictionName}"
+                                                  th:href="'/chapter/info/'+${item.id}"
+                                                  target="_blank">少年纵马且长歌</a></span>
+                        <span class="chap"><a th:text="${item.newest}" target="_blank">正文 第四十章，金堂主的问题</a></span>
+                        <span class="status" th:text="${item.state}">连载中</span><span th:text="${item.number}"
+                                                                                     class="count">9.7万</span>
+                        <span class="author" th:text="${item.author}"></span>
+                        <span class="time"
+                              th:text="${item.createDate}">12-19 11:57</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--图文区-->
+        <div class="store_collist">
+            <div th:each="item,status : ${data.data}" th:if="${data.viewType==2}">
+                <div th:class="${status.count%2==0}?'bookbox fr':'bookbox fl'" class="bookbox fl">
+                    <div class="bookimg">
+                        <a th:href="'/chapter/info/'+${item.id}" target="_blank">
+                            <img th:src="${item.imgUrl}"
+                                 src="http://www.shuquge.com/files/article/image/86/86786/86786s.jpg"
+                                 th:alt="${item.fictionName}" alt="">
+                        </a>
+                    </div>
+                    <div class="bookinfo">
+                        <div class="bookname">
+                            <a th:text="${item.fictionName}" th:href="'/chapter/info/'+${item.id}"
+                               target="_blank">暗影统领的公主妻</a>
+                        </div>
+                        <div class="bookilnk">
+                            <a th:text="${item.author}" href="" target="_blank">白白颜卿</a>|
+                            <a th:text="${item.type}" href="" target="_blank">历史军事}</a>|
+                            <span th:text="${item.state}">
+                                连载中
+                        	</span>|
+<!--                            #dates.format(item.createDate, 'yyyy-MM-dd HH:mm')-->
+                            <span th:text="${item.createDate}">
+                            更新时间&nbsp;&nbsp;2019-12-14T08:08:27.000+0000
+                            </span>
+                        </div>
+                        <div th:text="${item.brief}" class="bookintro">
+                            　　颜乐蓄谋已久的逃离控制着她生活的杀手组织，孤注一掷的想摆脱成为傀儡的命运，却未曾想到那夜的转机，改变了她早已被人安排的命盘，但她又好似陷入另一个旋涡......　　云衡王朝，皇帝亲立抗暝司，寓意破除灰暗，执掌光明，凌驾于一切官府。
+                            穆凌绎身为抗暝司统领最大职责是找回王朝唯一的异姓公主，这断了十几年的线索突然再一名女刺客身上明朗了......　　爱而不得的苏祁琰，此后一生有谁能陪伴在不老的他心里呢.......　　皇宫深院，有多少事都陷进了黑暗的阴谋之中......　　江湖传说暗影却是心上之人......　　并肩疆场杀敌之后......……
+                        </div>
+                        <div class="bookupdate">
+                            <a th:text="${item.newest}" href="" class="fl">第八百二十二章 她不是你娘亲！</a>
+                            <span class="rank_d_b_time"></span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${status.count%2==0}" class="dotline"></div>
+            </div>
+        </div>
+        <!--图文区-->
+    </div>
+    <!-- 分页 -->
+    <div style="text-align: center">
+        <div id="page"></div>
+    </div>
+    <!-- end书库主内容 -->
+</div>
+<div class="footer">
+    <div class="copyright">
+        <div class="links">
+            <a href="" target="_blank">诚聘英才</a>|
+            <a href="" target="_blank">商务合作</a>|
+            <a href="" target="_blank">法律声明</a>|
+            <a href="" target="_blank">帮助中心</a>|
+            <a href="" target="_blank">作者投稿</a>|
+            <a href="" target="_blank">联系我们</a>|
+            <a href="" target="_blank">友情链接</a>|
+            <a href="" target="_blank">谨防诈骗</a>|
+            <a href="" target="_blank">网站地图</a></div>
+
+
+    </div>
+    <input type="hidden" id="count" th:value="${data.count}">
+    <input type="hidden" id="limit" th:value="${data.limit}">
+    <input type="hidden" id="curr" th:value="${data.curr}">
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    ctxPath = /*[[@{/}]]*/ '';
+    /*]]>*/
+    //layui分页
+    layui.use('laypage', function () {
+        var laypage = layui.laypage;
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'page'
+            , loading: true
+            , limits: [20, 30, 40, 50]
+            , count: [[${data.count}]]
+            , curr: [[${data.curr}]]
+            , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+            , limit: [[${data.limit}]]
+            , jump: function (obj, first) {
+                //obj包含了当前分页的所有参数，比如：
+                console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+                console.log(obj.limit); //得到每页显示的条数
+                //首次不执行
+                if (!first) {
+                    queryByAllCondition(obj.curr, obj.limit);
+                }
+            }
+        })
+    });
+
+    //分页传参
+    function queryByAllCondition(curr, limit) {
+        var type = sessionStorage.getItem("type");
+        var state = sessionStorage.getItem("state");
+        var number = sessionStorage.getItem("number");
+        var time = sessionStorage.getItem("time");
+        var viewType = sessionStorage.getItem("viewType");
+        if (type === null) {
+            type = 0;
+            sessionStorage.setItem("type", type);
+        }
+        if (state === null) {
+            state = 0;
+            sessionStorage.setItem("state", state);
+        }
+        if (number === null) {
+            number = 0;
+            sessionStorage.setItem("number", number);
+        }
+        if (time === null) {
+            time = 0;
+            sessionStorage.setItem("time", time);
+        }
+        if (viewType === null) {
+            viewType = 2;
+            sessionStorage.setItem("viewType", viewType);
+        }
+        var url =   "/fiction/index?type=" + type + "&state=" + state + "&number=" + number + "&time=" + time + "&viewType=" + viewType + "&curr=" + curr + "&limit=" + limit;
+        window.location.href = url;
+    }
+
+    //设置点击记录
+    window.onload = function () {
+        //如果进入首页清除筛选条件
+        if (getStrAfter(window.location.href) === "index") {
+            sessionStorage.setItem("type", 0);
+            sessionStorage.setItem("state", 0);
+            sessionStorage.setItem("number", 0);
+            sessionStorage.setItem("time", 0);
+            sessionStorage.setItem("viewType", 2);
+        }
+        //设置默认属性值
+        //小说分类
+        if (sessionStorage.getItem("type") === undefined) {
+            $("#" + 0).addClass("current");
+        }
+        console.log(sessionStorage.getItem("viewType"))
+        //图文模式切换
+        var viewType = 1;
+        if (Number(sessionStorage.getItem("viewType")) === viewType) {
+            $("#c_digi").removeClass("active");
+            $("#l_list").addClass("active");
+        } else {
+            $("#c_digi").addClass("active");
+            $("#l_list").removeClass("active");
+        }
+        $("#type" + sessionStorage.getItem("type")).addClass("current");
+        $("#state" + sessionStorage.getItem("state")).addClass("current");
+        $("#number" + sessionStorage.getItem("number")).addClass("current");
+        $("#time" + sessionStorage.getItem("time")).addClass("current");
+    };
+
+    /*   前
+     　　string 字符串;
+     　　str 指定字符;
+     　　split(),用于把一个字符串分割成字符串数组;
+     　　split(str)[0],读取数组中索引为0的值（第一个值）,所有数组索引默认从0开始;
+    */
+    function getStrBefore(string, str) {
+        return string.split(str)[0];
+    }
+
+    /*
+     后
+ 　　string 字符串;
+ 　　str 指定字符;
+ 　　split(),用于把一个字符串分割成字符串数组;
+ 　　split(str)[0],读取数组中索引为0的值（第一个值）,所有数组索引默认从0开始;
+*/
+    function getStrAfter(string, str) {
+        return string.split(str)[1];
+    }
+
+    //分类查询
+    function queryBook(str) {
+
+        //保存导航点击记录
+        var str_before = getStrBefore(str, ":");
+        var str_after = getStrAfter(str, ":");
+        sessionStorage.setItem(str_before, str_after);
+        //拼接url
+        var type = sessionStorage.getItem("type");
+        var state = sessionStorage.getItem("state");
+        var number = sessionStorage.getItem("number");
+        var time = sessionStorage.getItem("time");
+        var viewType = sessionStorage.getItem("viewType");
+        var curr = sessionStorage.getItem("curr");
+        var limit = sessionStorage.getItem("limit");
+        if (type === null) {
+            type = 0;
+            sessionStorage.setItem("type", type);
+        }
+        if (state === null) {
+            state = 0;
+            sessionStorage.setItem("state", state);
+        }
+        if (number === null) {
+            number = 0;
+            sessionStorage.setItem("number", number);
+        }
+        if (time === null) {
+            time = 0;
+            sessionStorage.setItem("time", time);
+        }
+        if (viewType === null) {
+            viewType = 2;
+            sessionStorage.setItem("viewType", viewType);
+        }
+        if (curr === null) {
+            curr = 1;
+            sessionStorage.setItem("curr", curr);
+        }
+        if (limit === null) {
+            limit = 30;
+            sessionStorage.setItem("limit", limit);
+        }
+        var url =  "/fiction/index?type=" + type + "&state=" + state + "&number=" + number + "&time=" + time + "&viewType=" + viewType + "&curr=" + curr + "&limit=" + limit;
+        window.location.href = url;
+    }
+</script>
+
+</body>
+</html>

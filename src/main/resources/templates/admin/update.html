@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="UTF-8">
+  <title>上传表单</title>
+  <style>
+
+    .form3 {
+      width: 500px;
+      margin: 0 auto;
+      background-color: #fff; /* 表单背景色为白色 */
+      padding: 20px;
+      border-radius: 20px; /* 边框为椭圆 */
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* 添加阴影效果 */
+    }
+
+    .input1,
+    .select1,
+    .textarea1 {
+      font-size: 14px;
+      width: 70%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: #f8f8f8;
+      transition: border-color 0.3s ease;
+    }
+
+    .input1:focus,
+    .select1:focus,
+    .textarea1:focus {
+      outline: none;
+      border-color: #000; /* 聚焦时边框变为黑色 */
+    }
+
+    .label2 {
+      display: inline-block;
+      width: 120px;
+
+      margin-right: 20px;
+      font-weight: bold;
+    }
+
+    .textarea1 {
+      height: 120px;
+      resize: vertical;
+    }
+
+    .select1 {
+      appearance: none;
+      background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'><path fill='%23000' d='M.66.66L4 4l3.34-3.34a.471.471 0 0 1 .66 0 .471.471 0 0 1 0 .66L4.66 4a.47.47 0 0 1-.66 0L.66 1.32a.471.471 0 0 1 0-.66.471.471 0 0 1 .66 0z'/></svg>")
+      no-repeat right 10px center/10px auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+    }
+
+    #sumb {
+      background-color: #000; /* 提交按钮背景色为黑色 */
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+    }
+
+    #sumb:hover {
+      background-color: #333; /* 鼠标悬停时背景色变为深灰色 */
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <form  class="form3" th:action="@{'/fiction/update/'+${fiction.id}}" method="post" target="_parent" enctype="multipart/form-data" >
+    <div>
+      <label class="label2" for="author-input">作者：</label>
+      <input class="input1" th:value="${fiction.author}" type="text" id="author-input" required="required" name="author">
+    </div>
+    <div>
+      <label class="label2" for="fictionName-input">书名：</label>
+      <input class="input1" th:value="${fiction.fictionName}" type="text" id="fictionName-input" required="required" name="fictionName">
+    </div>
+    <div style=" display: flex;align-items: center;justify-content: center;">
+      <label class="label2" style="  display: table-cell;width: 120px; margin-right: 20px;font-weight: bold;
+        vertical-align: middle;" for="text-area">小说简介：</label>
+      <textarea class="textarea1" id="text-area" name="brief" required="required" wrap="soft"   rows="4" cols="25"
+                style=" resize: none;resize: unset;"   th:text="${fiction.brief}"     maxlength="100" placeholder="限定100个字"></textarea>
+    </div>
+    <div>
+      <label class="label2" for="select1">状态:</label>
+      <select class="select1" id="select1" name="state" >
+        <option value="连载中">连载中</option>
+        <option value="完结" >完结</option>
+      </select>
+    </div>
+    <div>
+      <label class="label2" for="select2">类型：</label>
+      <select class="select1" id="select2" name="type" >
+        <option value="玄幻魔法">玄幻魔法</option>
+        <option value="武侠修真" >武侠修真</option>
+        <option value="都市言情">都市言情</option>
+        <option value="历史军事" >历史军事</option>
+        <option value="侦探推理">侦探推理</option>
+        <option value="网游动漫" >网游动漫</option>
+        <option value="科幻灵异">科幻灵异</option>
+        <option value="文学典籍">文学典籍</option>
+      </select>
+    </div>
+    <div style=" display: flex; justify-content: center;">
+      <input class="select1" id="sumb" type="submit" value="修改书籍">
+    </div>
+  </form>
+</div>
+<script>
+  var select = document.getElementById("select2");
+  select.value="[[${fiction.type}]]";
+
+  var select1 = document.getElementById("select1");
+  select1.value="[[${fiction.state}]]";
+</script>
+</body>
+
+</html>
+

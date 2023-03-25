@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cduestc.book_novels.mapper.AdminMapper">
+    <select id="selectOneAdmin" resultType="com.cduestc.book_novels.bean.Admin">
+        select * from admin where `username`=#{username} and `password`=#{password}
+    </select>
+    <insert id="insertOneFiction" parameterType="com.cduestc.book_novels.bean.Fiction" useGeneratedKeys="true" keyProperty="id" >
+        insert into fiction (`fiction_name`,`create_date`,`author`,`type`,`state`,`number`,`brief`,`img_url`,`fiction_url`,`views`,`newest`)
+        values(#{fictionName},#{createDate},#{author},#{type},#{state},#{number},#{brief},#{imgUrl},#{fictionUrl},#{views},#{newest})
+
+    </insert>
+    <insert id="insertChapter" parameterType="list">
+        insert into chapter (`fiction_id`,`chapter_name`,`create_date`,`sort`,`row`,`chapter_content`)
+        values
+        <foreach collection="chapters" item="chapter"  separator=",">
+            (#{chapter.fictionId},#{chapter.chapterName},#{chapter.createDate},#{chapter.sort},
+            #{chapter.row},#{chapter.chapterContent})
+          </foreach>
+<!--        values(#{fictionId},#{chapterName},#{createDate},#{sort},#{row},#{chapterContent})-->
+    </insert>
+    <update id="updateNewestByid">
+        update fiction
+        set   newest=#{Newest}
+        where id = #{id}
+
+    </update>
+</mapper>

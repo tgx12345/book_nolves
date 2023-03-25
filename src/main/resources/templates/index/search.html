@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>图书共享系统</title>
+    <meta name="keywords" content="图书共享系统1"/>
+    <meta name="description" content="图书共享系统"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/basic.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/search.min.css}"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+
+    <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/jquery-1.9.1.js}"></script>
+    <style>
+        .span2{
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="head">
+        <div class="head-top clearfix">
+            <div class="logo imgbox fl">
+                <a th:href="@{/fiction/index}">
+                    <img th:src="@{/picture/logo2.jpg}" alt="logo">
+                    首页
+                </a>
+            </div>
+            <form id="commSearch" name="searchForm" method="get" th:action="@{/fiction/search}" target="_blank">
+                <div class="search-box fl" data-hook="searchSuggest">
+                    <label>
+                        <input class="search-text fl" name="fictionName" type="text"
+                               placeholder="请输入书名" />
+                    </label>
+                    <input type="submit" class="search-btn fr"/>
+                </div>
+            </form>
+            <div class="right-wrap-login ud_userTox" style="right: 0">
+                <div class="unlogin ud_unlogin clearfix">
+                    <div th:if="${session.user.username==null}" class="login fl"><a class="user_login layui-icon" th:href="@{/login}">&#xe66f;登录</a></div>
+                    <div th:if="${session.user.username==null}" class="regist fl"><a class="user_register layui-icon" th:href="@{/signin}">&#xe672;注册</a></div>
+                    <div th:if="${session.user.username!=null}" class="shelf">
+                        <a th:href="@{/shelf/shelf}" class="layui-icon" target="_blank">&#xe705;书架</a>
+                        <a style="padding-left: 18px;" class="layui-icon" th:href="@{/logout}">&#x1006;注销</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="h10-blank"></div>
+    <!-- 1.	书库头部广告位 -->
+    <div class="h20-blank"></div>
+    <!-- 搜索主内容 -->
+    <div class="h10-blank"></div>
+    <div class="search-html-box clearfix">
+        <div class="search-main fl">
+            <div class="search-nav">
+                <a href=""><span class="active">默认</span></a>
+            </div>
+            <div th:each="item : ${list}"  class="search-tab">
+                <div class="search-result-list clearfix">
+                    <div class="imgbox fl se-result-book">
+                        <a th:href="'/chapter/info/'+${item.id}" target="_blank">
+                            <img style="width: 100px; height: 132px"  th:src="${item.imgUrl}" src=""  alt="">
+                        </a>
+                    </div>
+                    <div class="fl se-result-infos">
+                        <h2 class="tit"><a th:href="'chapter/info/'+${item.id}" target="_blank" ><font color="RED" th:text="${item.fictionName}"></font></a></h2>
+
+                        <div class="bookinfo">
+                            <a  th:text="${item.author}" href="" target="_blank" >烽火戏诸侯</a>
+                            <em>|</em><a  th:href="${item.state}" href=""  target="_blank" >奇幻玄幻</a>
+                            <em>|</em><span th:text="${item.state}" >完结</span>
+                            <em>|</em><span>4615729字</span></div>
+                        <p><font th:text="${item.brief}" color="RED">中</font></p>
+                        <div th:text="${item.type}" class="key-word">关键词：烽火戏诸侯 热血 玄幻 修真
+                        </div>
+                    </div>
+                    <div class="btn">
+                        <a  th:href="'/chapter/info/'+${item.id}"  target="_blank" class="bkinfo">书籍详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="search-side fr">
+            <div class="search-side-con">
+                <div class="se-side-tit">大家都在搜</div>
+                <div th:each="book : ${ViewsList}" class="se-side-cell clearfix" data-bookId="325639">
+<!--                    div  hidden-->
+                    <div class="imgbox fl se-side-book">
+                        <a th:href="'/chapter/info/'+${book.id}" target="_blank">
+                            <img th:src="${book.imgUrl}" alt="">
+                        </a>
+                    </div>
+                    <div class="se-side-info fl">
+                        <div class="bookname"><a href="javascript:void(0)">
+                            <font th:text="${book.fictionName}"></font></a>
+                        </div>
+                        <div class="bookinfo"><a href="javascript:void(0)">
+                            <span class="span2" th:text="${book.author}">作者</span></a>
+                            <em>|</em>
+                            <a href="javascript:void(0)"  >
+                                <span class="span2" th:text="${book.type}" >类型</span>
+                            </a></div>
+                        <p th:text="${book.brief}" class="b-infos span2">世纪之交，人类懵懂着踏入星空，就此暴露在诸神的视线之下。少年罗南背负着祖父的罪孽，走出实验室，且看他：
+                            高举燃烧的笔记，脚踏诸神的尸骨；
+                            书写万物的格式，增删宇宙的星图。
+                            当知：万物皆备于我；必信：吾心即是宇宙。
+                          </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="copyright">
+        <div class="links">
+            <a href="" target="_blank">诚聘英才</a>|
+            <a href="" target="_blank">商务合作</a>|
+            <a href="" target="_blank">法律声明</a>|
+            <a href="" target="_blank">帮助中心</a>|
+            <a href="" target="_blank">作者投稿</a>|
+            <a href="" target="_blank">联系我们</a>|
+            <a href="" target="_blank">友情链接</a>|
+            <a href="" target="_blank">谨防诈骗</a>|
+            <a href="" target="_blank">网站地图</a></div>
+
+    </div>
+</div>
+</body>
+</html>

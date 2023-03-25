@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cduestc.book_novels.mapper.FictionMapper">
+    <select id="getAllfiction" resultType="com.cduestc.book_novels.bean.Fiction" >
+        select id,fiction_name,create_date,author,views,number from fiction
+    </select>
+    <select id="getFictionById" resultType="com.cduestc.book_novels.bean.Fiction">
+        select * from fiction where id=#{id}
+    </select>
+    <select id="getFictionByIds"  parameterType="list" resultType="com.cduestc.book_novels.bean.Fiction" >
+        select `img_url`,`fiction_url`,`id`,`views` from fiction where `id` in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+<!--    通过条件查询  传入的str-->
+    <select id="getListByCondition" resultType="com.cduestc.book_novels.bean.Fiction" >
+        select  *  from fiction
+        <where>
+        <if test="sqltype != null and sqltype != '' ">
+            and  `type` =  #{sqltype}
+        </if>
+        <if test="sqlstate != null and sqlstate != '' ">
+            and `state`  =  #{sqlstate}
+        </if>
+        <if test="sqlnum != null and sqlnum != '' ">
+            and   ${sqlnum}
+        </if>
+        <if test="sqltime != null and sqltime != '' ">
+            and `create_date` &gt;  #{sqltime}
+        </if>
+        </where>
+       ORDER BY `create_date`
+<!--        sql有问题-->
+    </select>
+
+
+    <delete id="deleteByIdFiction">
+        delete from   fiction where `id`= #{id}
+    </delete>
+
+    <delete id="deleteByIdChapter">
+        delete from   chapter where `fiction_id`= #{fiction_id}
+    </delete>
+
+    <delete id="deletefictionByIds" parameterType="list">
+        delete from fiction where `id` in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="queryFictionLike" resultType="com.cduestc.book_novels.bean.Fiction">
+        select * from fiction where fiction_name like concat('%',#{fictionName},'%')
+    </select>
+
+
+    <update id="updateView" >
+        update fiction
+        set   `views`=#{fiction.views}
+        where `id` = #{fiction.id}
+    </update>
+
+    <select id="queryViews"  resultType="com.cduestc.book_novels.bean.Fiction">
+        SELECT * FROM fiction ORDER BY `views` DESC LIMIT 3
+    </select>
+
+<!--    SELECT * FROM fiction ORDER BY fiction.views DESC LIMIT 3   推荐点击量前三的-->
+
+    <update id="updateFiciton">
+        update fiction
+        set
+       `fiction_name`=#{fictionName},`author`=#{author},`state`=#{state},`type`=#{type},`brief`=#{brief}
+        where `id`=#{id}
+    </update>
+
+    <update id="updateFictionBynewChapter">
+        update fiction
+        set
+        `number`=#{number},`create_date`=#{createDate},`newest`=#{newest}
+        where `id`=#{id}
+    </update>
+</mapper>
