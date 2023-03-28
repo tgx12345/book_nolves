@@ -2,19 +2,22 @@ package com.cduestc.book_novels.service.impl;
 
 import com.cduestc.book_novels.bean.Chapter;
 import com.cduestc.book_novels.bean.Fiction;
-import com.cduestc.book_novels.bean.Shelf;
 import com.cduestc.book_novels.commom.DataGridView;
+import com.cduestc.book_novels.mapper.ChapterMapper;
 import com.cduestc.book_novels.mapper.FictionMapper;
 import com.cduestc.book_novels.mapper.ShelfMapper;
 import com.cduestc.book_novels.service.IFictionService;
-import com.cduestc.book_novels.utils.Chapterutil;
+
 import com.cduestc.book_novels.vo.FictionVo;
 import com.cduestc.book_novels.utils.FileOperation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,17 +28,22 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.joda.time.DateTime;
 
 import javax.annotation.Resource;
-import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
 @Service
 public class FictionServiceImpl implements IFictionService {
+    @Resource
+    RedisTemplate<String,String> redisTemplate;
 
+    private  final ObjectMapper objectMapper=new ObjectMapper();
     private  final DataSourceTransactionManager transactionManager;
 
     @Autowired
@@ -62,7 +70,8 @@ public class FictionServiceImpl implements IFictionService {
     FictionMapper fictionMapper;
     @Resource
     ShelfMapper shelfMapper;
-
+    @Resource
+    ChapterMapper chapterMapper;
 
     @Override
     public List<Fiction> getALL() {
@@ -225,8 +234,10 @@ public class FictionServiceImpl implements IFictionService {
     }
 
     @Override
-    public Fiction queryFictionById(int id) {
+    public Fiction queryFictionById(int id) throws JsonProcessingException {
+
         Fiction fiction = fictionMapper.getFictionById(id);
+
 //        需要使用图片路径 需要更改
         String imgUrl = fiction.getImgUrl();
         String newImgUrl = imgUrl.substring(imgUrl.lastIndexOf("\\"));
@@ -260,6 +271,24 @@ public class FictionServiceImpl implements IFictionService {
     public void updateFiction(Fiction fiction) {
 //     修改   fiction_name,author,state,type,brief
         fictionMapper.updateFiciton(fiction);
+    }
+
+    @Override
+    @Async("async")
+    public void queryChaptersById(int id) throws JsonProcessingException {
+//        传入redis   key为fiction_id  value:Map<integer,Chapter>
+        Map<Integer,Chapter> map = chapterMapper.queryMapChapterByficiton_id(id);
+        Map<String,String>  map2=new HashMap<>();
+        for (Map.Entry<Integer,Chapter> entry : map.entrySet()) {
+            String key = entry.getKey().toString();
+            String s = objectMapper.writeValueAsString(entry.getValue());
+            map2.put(key, s);
+        }
+
+//        加入redis
+        String s = String.valueOf(id);
+        redisTemplate.opsForHash().putAll(s,map2);
+//        redisTemplate.expire(s, 1000, TimeUnit.SECONDS);
     }
 
 

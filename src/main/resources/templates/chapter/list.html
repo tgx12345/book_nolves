@@ -73,7 +73,7 @@
                     <ul  class="chapter-list clearfix">
 
                         <li th:each="item : ${chapters}" class=" col-4">
-                            <a  th:text="${item.chapterName}" th:href="'/chapter/read/'+${item.fictionId}+'/'+${item.sort}" target="_blank" th:alt-title="${fiction.fictionName}+'更新时间：'+${item.createDate}"></a>
+                            <a  th:text="${item.value.chapterName}" th:href="'/chapter/read/'+${item.value.fictionId}+'/'+${item.value.sort}" target="_blank" th:alt-title="${fiction.fictionName}+'更新时间：'+${item.value.createDate}"></a>
                         </li>
 
                     </ul>
@@ -101,5 +101,8 @@
         </div>
     </div>
 </div>
+<script>
+    console.log([[${chapters}]])
+</script>
 </body>
 </html>

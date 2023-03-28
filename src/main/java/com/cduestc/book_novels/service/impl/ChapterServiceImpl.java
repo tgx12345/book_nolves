@@ -6,31 +6,63 @@ import com.cduestc.book_novels.mapper.ChapterMapper;
 import com.cduestc.book_novels.mapper.FictionMapper;
 import com.cduestc.book_novels.service.IChapterService;
 import com.cduestc.book_novels.utils.FileOperation;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
+@Slf4j
 public class ChapterServiceImpl implements IChapterService {
 
     @Resource
     ChapterMapper chapterMapper;
     @Resource
     FictionMapper fictionMapper;
+    @Autowired
+    RedisTemplate<String,String> redisTemplate;
+    private  final ObjectMapper objectMapper=new ObjectMapper();
+
 
     @Override
-    public List<Chapter> queryChaptersByfiction_id(int fiction_id) {
-        List<Chapter> chapters = chapterMapper.queryChapterByficiton_id(fiction_id);
+    public Map<Integer, Chapter> queryChaptersByfiction_id(int fiction_id) throws JsonProcessingException {
+//查询redis
+        if (redisTemplate.hasKey(fiction_id+"")){
+            Map<Object, Object> map1 = redisTemplate.opsForHash().entries(fiction_id + "");
+            Map<Integer, Chapter> chaptermap = new HashMap<>();
 
-        return chapters;
+            for (Map.Entry<Object, Object> entry : map1.entrySet()) {
+                Integer key = Integer.valueOf(entry.getKey().toString());
+                Chapter chapter = objectMapper.readValue(entry.getValue().toString(), Chapter.class);
+                chaptermap.put(key, chapter);
+            }
+            return chaptermap;
+        }
+//        List<Chapter> chapters = chapterMapper.queryChapterByficiton_id(fiction_id);
+        Map<Integer,Chapter> map = chapterMapper.queryMapChapterByficiton_id(fiction_id);
+        return map;
     }
 
     @Override
-    public Chapter queryChapter(int fiction_id, int sort) {
+    public Chapter queryChapter(int fiction_id, int sort) throws JsonProcessingException {
+//查询redis
+        String s = String.valueOf(fiction_id);
+
+        if ( redisTemplate.opsForHash().hasKey(s, sort + "")){
+            Object cha = redisTemplate.opsForHash().get(s, sort + "");
+            Chapter chapter1 = objectMapper.readValue(cha.toString(), Chapter.class);
+            return chapter1;
+        }
         Chapter chapter = chapterMapper.queryChapter(fiction_id, sort);
         return chapter;
     }

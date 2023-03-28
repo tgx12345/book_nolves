@@ -6,9 +6,7 @@
     <select id="getAllfiction" resultType="com.cduestc.book_novels.bean.Fiction" >
         select id,fiction_name,create_date,author,views,number from fiction
     </select>
-    <select id="getFictionById" resultType="com.cduestc.book_novels.bean.Fiction">
-        select * from fiction where id=#{id}
-    </select>
+
     <select id="getFictionByIds"  parameterType="list" resultType="com.cduestc.book_novels.bean.Fiction" >
         select `img_url`,`fiction_url`,`id`,`views` from fiction where `id` in
         <foreach collection="list" item="id" open="(" close=")" separator=",">
@@ -82,4 +80,11 @@
         `number`=#{number},`create_date`=#{createDate},`newest`=#{newest}
         where `id`=#{id}
     </update>
+
+
+    <select id="getFictionById" resultType="com.cduestc.book_novels.bean.Fiction">
+        select * from fiction where id=#{id}
+    </select>
+
+
 </mapper>

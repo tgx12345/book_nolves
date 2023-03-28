@@ -5,6 +5,7 @@ import com.cduestc.book_novels.bean.Responseresult;
 import com.cduestc.book_novels.commom.DataGridView;
 import com.cduestc.book_novels.service.IFictionService;
 import com.cduestc.book_novels.vo.FictionVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,7 +74,7 @@ public class FictionController {
         return "index/search";
     }
     @RequestMapping(value = "/update_info/{id}")
-    public String update_info(@PathVariable("id") int id,Model model){
+    public String update_info(@PathVariable("id") int id,Model model) throws JsonProcessingException {
 //                根据id查出书籍 回显
         Fiction fiction = fictionService.queryFictionById(id);
         model.addAttribute("fiction",fiction);

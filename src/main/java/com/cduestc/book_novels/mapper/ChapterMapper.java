@@ -1,10 +1,13 @@
 package com.cduestc.book_novels.mapper;
 
 import com.cduestc.book_novels.bean.Chapter;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ChapterMapper {
@@ -14,4 +17,8 @@ public interface ChapterMapper {
     Chapter queryChapter(@Param("fiction_id")int fiction_id,@Param("sort")int sort);
     Integer queryMaxSort(@Param("fiction_id")int fiction_id);
     void  insertChapter(Chapter chapter);
+
+    @MapKey("sort")
+    Map<Integer, Chapter>  queryMapChapterByficiton_id(@Param("fiction_id")int fiction_id);
+
 }

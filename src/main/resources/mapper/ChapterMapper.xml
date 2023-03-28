@@ -16,4 +16,18 @@
         insert into chapter   (`fiction_id`,`chapter_name`,`create_date`,`sort`,`chapter_content`)
                                 values(#{fictionId},#{chapterName},#{createDate},#{sort},#{chapterContent})
     </insert>
+
+    <select id="queryMapChapterByficiton_id" resultMap="queryMap">
+        select * from chapter  where `fiction_id`=#{fiction_id}
+    </select>
+    <resultMap id="queryMap" type="java.util.HashMap">
+                    <id column="sort" property="sort"></id>
+                     <result property="id" column="id"></result>
+                    <result property="fictionId" column="fiction_id"></result>
+                    <result property="chapterName" column="chapter_name"></result>
+                    <result property="createDate" column="create_date"></result>
+                    <result property="sort" column="sort"></result>
+                    <result property="row" column="row"></result>
+                    <result property="chapterContent" column="chapter_content"></result>
+    </resultMap>
 </mapper>

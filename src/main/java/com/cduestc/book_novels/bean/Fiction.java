@@ -1,12 +1,18 @@
 package com.cduestc.book_novels.bean;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
+
 @Data
 public class Fiction implements Serializable {
     private static final long serialVersionUID=1L;
+
+    private Map<Integer,Chapter>  chapters;
     private Integer id;
     private String fictionName;
     private String author;

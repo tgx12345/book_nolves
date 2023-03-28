@@ -71,7 +71,7 @@
                             </div>
                             <div class="btn-group">
                                 <a class="btn read-btn" target="_blank" th:href="'/chapter/read/'+${fiction.id}+'/'+${sort}">开始阅读</a>
-                                <a class="btn read-btn" target="_blank" th:href="'/chapter/list/'+${fiction.id}">章节目录</a>
+                                <a class="btn read-btn"  th:href="'/chapter/list/'+${fiction.id}">章节目录</a>
                                 <div th:if="${presence==0}" id="add-shelf" th:name="${fiction.id}" class="btn store-btn no-stored">
                                     加入书架
                                 </div>

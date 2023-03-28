@@ -6,6 +6,7 @@ import com.cduestc.book_novels.bean.Shelf;
 import com.cduestc.book_novels.service.IChapterService;
 import com.cduestc.book_novels.service.IFictionService;
 import com.cduestc.book_novels.service.IShelfService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -41,11 +43,15 @@ public class ChapterController {
     }
 
     @RequestMapping(value = "/info/{fiction_id}")
-    public String chapterInfo(@PathVariable("fiction_id") int fiction_id, Model model, HttpServletRequest request) {
+    public String chapterInfo(@PathVariable("fiction_id") int fiction_id, Model model, HttpServletRequest request) throws JsonProcessingException {
         HttpSession session = request.getSession();
 
 // 添加访问量  书籍的信息  是否纯在书架  ,sort 排序
+
         Fiction fiction = fictionService.queryFictionById(fiction_id);
+//   写入redis
+          fictionService.queryChaptersById(fiction_id);
+
         fictionService.addView(fiction);
         model.addAttribute("fiction", fiction);
         model.addAttribute("title", fiction.getFictionName());
@@ -73,18 +79,18 @@ public class ChapterController {
      * @return
      */
     @RequestMapping(value = "/list/{fiction_id}", method = RequestMethod.GET)
-    public String chapterList(@PathVariable("fiction_id") int fiction_id, Model model) {
+    public String chapterList(@PathVariable("fiction_id") int fiction_id, Model model) throws JsonProcessingException {
 // 查询相关书籍信息  查询对应章节列表
         Fiction fiction = fictionService.queryFictionById(fiction_id);
-        List<Chapter> chapters = chapterService.queryChaptersByfiction_id(fiction_id);
-        model.addAttribute("chapters", chapters);
+        Map<Integer,Chapter> chaptersmap = chapterService.queryChaptersByfiction_id(fiction_id);
+        model.addAttribute("chapters", chaptersmap);
         model.addAttribute("fiction", fiction);
-        model.addAttribute("size", chapters.size());
+        model.addAttribute("size", chaptersmap.size());
         return "chapter/list";
     }
 
     @RequestMapping(value = "/read/{fiction_id}/{sort}")
-    public String readChapter(HttpServletRequest request, Model model, @PathVariable("fiction_id") int fiction_id, @PathVariable("sort") int sort) {
+    public String readChapter(HttpServletRequest request, Model model, @PathVariable("fiction_id") int fiction_id, @PathVariable("sort") int sort) throws JsonProcessingException {
 //        根据所选章节信息 查询相关的章节 fiction_id sort
 //        先修改书架信息
         HttpSession session = request.getSession();
@@ -107,7 +113,8 @@ public class ChapterController {
 
 
     @RequestMapping(value = "netRead/{fiction_id}/{sort}/{status}", method = RequestMethod.GET)
-    public String netChapter(HttpServletRequest request,@PathVariable("fiction_id") int fiction_id, @PathVariable("sort") int sort, @PathVariable("status") int status, Model model) {
+    public String netChapter(HttpServletRequest request,@PathVariable("fiction_id") int fiction_id,
+                             @PathVariable("sort") int sort, @PathVariable("status") int status, Model model) throws JsonProcessingException {
 //       如果上传的status 为1则为上一章
         if (status == 1) {
             if (sort != 1) {

@@ -1,5 +1,6 @@
 package com.cduestc.book_novels.bean;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,8 +15,7 @@ public class Chapter implements Serializable {
     private Integer fictionId;
     private String chapterName;
 
-//    private Timestamp createDate;
-//    暂时使用string
+
 
     private String createDate;
     private Integer sort;
